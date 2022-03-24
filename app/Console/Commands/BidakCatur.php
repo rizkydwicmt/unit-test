@@ -101,8 +101,44 @@ class BidakCatur extends Command
         $bidak[$bidak7[0]][$bidak7[1]] = true;
         $bidak[$bidak8[0]][$bidak8[1]] = true;
 
+        //kelola data
+        $i = 0;
+        $result = [];
+        for ($y = 1; $y <= 8; $y++) {
+            for ($x = 1; $x <= 8; $x++) {
+                if ($bidak[$x][$y] == true) {
+                    for ($yb = 1; $yb <= 8 - $y; $yb++) {
+                        for ($xb = 1; $xb <= 8 - $x; $xb++) {
+                            if ($bidak[$x + $xb][$y] == true) {
+                                $result[$i] = '(' . $x . ',' . $y . ')';
+                                $bidak[$x + $xb][$y] = false;
+                                $i++;
+                            }
+                            if ($bidak[$x][$y + $yb] == true) {
+                                $result[$i] = '(' . $x . ',' . $y . ')';
+                                $bidak[$x][$y + $yb] = false;
+                                $i++;
+                            }
+                        }
+                        if ($x + $yb < 9 && $y + $yb < 9 && $bidak[$x + $yb][$y + $yb] == true) {
+                            $result[$i] = '(' . $x . ',' . $y . ')';
+                            $bidak[$x + $yb][$y + $yb] = false;
+                            $i++;
+                        }
+                        if ($x - $yb > 0 && $y + $yb < 9 && $bidak[$x - $yb][$y + $yb] == true) {
+                            $result[$i] = '(' . $x . ',' . $y . ')';
+                            $bidak[$x + $yb][$y + $yb] = false;
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+
+        $result = implode(', ', array_unique($result));
+
         //output
         $this->info('Hasil');
-        $this->info($bidak[1][1]);
+        $this->info($result);
     }
 }
