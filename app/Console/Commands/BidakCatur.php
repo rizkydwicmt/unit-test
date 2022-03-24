@@ -76,7 +76,33 @@ class BidakCatur extends Command
         $bidak7 = $this->askValid('masukkan bidak 7 (x,y)', 'bidak7', ['required', 'regex:/^\d+(\,|\, +)\d+$/i']);
         $bidak8 = $this->askValid('masukkan bidak 8 (x,y)', 'bidak8', ['required', 'regex:/^\d+(\,|\, +)\d+$/i']);
 
+        //masukkan ke array
+        $bidak1 = preg_split('/\D+/i', $bidak1);
+        $bidak2 = preg_split('/\D+/i', $bidak2);
+        $bidak3 = preg_split('/\D+/i', $bidak3);
+        $bidak4 = preg_split('/\D+/i', $bidak4);
+        $bidak5 = preg_split('/\D+/i', $bidak5);
+        $bidak6 = preg_split('/\D+/i', $bidak6);
+        $bidak7 = preg_split('/\D+/i', $bidak7);
+        $bidak8 = preg_split('/\D+/i', $bidak8);
+
+        for ($y = 1; $y <= 8; $y++) {
+            for ($x = 1; $x <= 8; $x++) {
+                $bidak[$x][$y] = false;
+            }
+        }
+
+        $bidak[$bidak1[0]][$bidak1[1]] = true;
+        $bidak[$bidak2[0]][$bidak2[1]] = true;
+        $bidak[$bidak3[0]][$bidak3[1]] = true;
+        $bidak[$bidak4[0]][$bidak4[1]] = true;
+        $bidak[$bidak5[0]][$bidak5[1]] = true;
+        $bidak[$bidak6[0]][$bidak6[1]] = true;
+        $bidak[$bidak7[0]][$bidak7[1]] = true;
+        $bidak[$bidak8[0]][$bidak8[1]] = true;
+
         //output
-        $this->info('Data added successfully');
+        $this->info('Hasil');
+        $this->info($bidak[1][1]);
     }
 }
