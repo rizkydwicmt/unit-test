@@ -58,6 +58,73 @@ class BidakCatur extends Command
             : null;
     }
 
+    protected function getBidakArray($bidak1, $bidak2, $bidak3, $bidak4, $bidak5, $bidak6, $bidak7, $bidak8)
+    {
+        //membuat array papan catur
+        for ($y = 1; $y <= 8; $y++) {
+            for ($x = 1; $x <= 8; $x++) {
+                $bidak[$x][$y] = false;
+            }
+        }
+
+        $bidak[$bidak1[0]][$bidak1[1]] = true;
+        $bidak[$bidak2[0]][$bidak2[1]] = true;
+        $bidak[$bidak3[0]][$bidak3[1]] = true;
+        $bidak[$bidak4[0]][$bidak4[1]] = true;
+        $bidak[$bidak5[0]][$bidak5[1]] = true;
+        $bidak[$bidak6[0]][$bidak6[1]] = true;
+        $bidak[$bidak7[0]][$bidak7[1]] = true;
+        $bidak[$bidak8[0]][$bidak8[1]] = true;
+
+        return $bidak;
+    }
+
+    protected function getKelolaBidak($bidak){
+        $i = 0;
+        $result = [];
+        //for untuk membuat papan catur
+        for ($y = 1; $y <= 8; $y++) {
+            for ($x = 1; $x <= 8; $x++) {
+                //jika bidak yg terisi ratu ditemukan
+                if ($bidak[$x][$y] == true) {
+                    //for untuk mencari ratu yang akan dimakan
+                    for ($yb = 1; $yb <= 8 - $y; $yb++) {
+                        for ($xb = 1; $xb <= 8 - $x; $xb++) {
+                            //mencari makan ke kanan
+                            if ($bidak[$x + $xb][$y] == true) {
+                                $result[$i] = '(' . $x . ',' . $y . ')';
+                                $bidak[$x + $xb][$y] = false;
+                                $i++;
+                            }
+                            //mencari makan ke atas
+                            if ($bidak[$x][$y + $yb] == true) {
+                                $result[$i] = '(' . $x . ',' . $y . ')';
+                                $bidak[$x][$y + $yb] = false;
+                                $i++;
+                            }
+                        }
+                        //mencari makan ke diagonal kanan atas
+                        if ($x + $yb < 9 && $y + $yb < 9 && $bidak[$x + $yb][$y + $yb] == true) {
+                            $result[$i] = '(' . $x . ',' . $y . ')';
+                            $bidak[$x + $yb][$y + $yb] = false;
+                            $i++;
+                        }
+                        //mencari makan ke diagonal kiri atas
+                        if ($x - $yb > 0 && $y + $yb < 9 && $bidak[$x - $yb][$y + $yb] == true) {
+                            $result[$i] = '(' . $x . ',' . $y . ')';
+                            $bidak[$x + $yb][$y + $yb] = false;
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+
+        $result = implode(', ', array_unique($result));
+        if($result == '') return 'tidak ditemukan';
+        return $result;
+    }
+
     /**
      * Execute the console command.
      *
@@ -86,56 +153,10 @@ class BidakCatur extends Command
         $bidak7 = preg_split('/\D+/i', $bidak7);
         $bidak8 = preg_split('/\D+/i', $bidak8);
 
-        for ($y = 1; $y <= 8; $y++) {
-            for ($x = 1; $x <= 8; $x++) {
-                $bidak[$x][$y] = false;
-            }
-        }
+        $bidak = $this->getBidakArray($bidak1, $bidak2, $bidak3, $bidak4, $bidak5, $bidak6, $bidak7, $bidak8);
 
-        $bidak[$bidak1[0]][$bidak1[1]] = true;
-        $bidak[$bidak2[0]][$bidak2[1]] = true;
-        $bidak[$bidak3[0]][$bidak3[1]] = true;
-        $bidak[$bidak4[0]][$bidak4[1]] = true;
-        $bidak[$bidak5[0]][$bidak5[1]] = true;
-        $bidak[$bidak6[0]][$bidak6[1]] = true;
-        $bidak[$bidak7[0]][$bidak7[1]] = true;
-        $bidak[$bidak8[0]][$bidak8[1]] = true;
-
-        //kelola data
-        $i = 0;
-        $result = [];
-        for ($y = 1; $y <= 8; $y++) {
-            for ($x = 1; $x <= 8; $x++) {
-                if ($bidak[$x][$y] == true) {
-                    for ($yb = 1; $yb <= 8 - $y; $yb++) {
-                        for ($xb = 1; $xb <= 8 - $x; $xb++) {
-                            if ($bidak[$x + $xb][$y] == true) {
-                                $result[$i] = '(' . $x . ',' . $y . ')';
-                                $bidak[$x + $xb][$y] = false;
-                                $i++;
-                            }
-                            if ($bidak[$x][$y + $yb] == true) {
-                                $result[$i] = '(' . $x . ',' . $y . ')';
-                                $bidak[$x][$y + $yb] = false;
-                                $i++;
-                            }
-                        }
-                        if ($x + $yb < 9 && $y + $yb < 9 && $bidak[$x + $yb][$y + $yb] == true) {
-                            $result[$i] = '(' . $x . ',' . $y . ')';
-                            $bidak[$x + $yb][$y + $yb] = false;
-                            $i++;
-                        }
-                        if ($x - $yb > 0 && $y + $yb < 9 && $bidak[$x - $yb][$y + $yb] == true) {
-                            $result[$i] = '(' . $x . ',' . $y . ')';
-                            $bidak[$x + $yb][$y + $yb] = false;
-                            $i++;
-                        }
-                    }
-                }
-            }
-        }
-
-        $result = implode(', ', array_unique($result));
+        // //kelola data
+        $result = $this->getKelolaBidak($bidak);
 
         //output
         $this->info('Hasil');
